@@ -48,21 +48,24 @@ public class LogParser {
                 string02 = string01.replaceAll("\t", "--");
 
                 regString += string02.charAt(1);
-                System.out.println(string02.charAt(1));
                 if (regString.matches("\\d+")) {
                     stringDate = "";
                     index02 = string02.indexOf(' ', string02.indexOf(' ') + 1);
-                    System.out.println(index02);
                     for (int i = 0; i < index02; i++) {
                         stringDate += string01.charAt(i);
                     }
                     string01 = string02;
+                    System.out.println("YEP");
                 } else {
                     string01 = stringDate + " " + string02;
+                    System.out.println("NOP");
                 }
-                System.out.println(string01);
+
+                
+                
                 bwOFFICE01Amadeus.write(string01);
                 bwOFFICE01Amadeus.write('\n');
+                regString = "";
             }
             bwOFFICE01Amadeus.close();
         } catch (Exception allExceptions) {

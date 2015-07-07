@@ -3,11 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package LogParserv8Works;
+package LogParserv8WorksMysql;
 
-import LogParserv8WorksMysql.*;
-import LogParserv7RecordTypes.*;
-import LogParserv6RecordTypes.*;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,6 +18,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import LogParserv4MysqlEdition.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class LogParser {
 
@@ -37,9 +38,11 @@ public class LogParser {
         File folder = new File(folderPath);
         File[] listOfFiles = folder.listFiles();
 
-      //  GetStringType getStringType = new GetStringType();
+        Mysql ms;
 
+        //  GetStringType getStringType = new GetStringType();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss,SSS");
+        SimpleDateFormat dateFormatMysql = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //SimpleDateFormat dateFormatwithName = new SimpleDateFormat("MMMM dd, yyyy K:mm:ss a");
         SimpleDateFormat dateFormatwithName = new SimpleDateFormat("MMMM dd, yyyy K:mm:ss a", Locale.ENGLISH);
 
@@ -70,14 +73,13 @@ public class LogParser {
             System.out.println(fileList.get(qi));
         }
 //                    System.out.println("");
-        
-        
+
         for (int qi = 0; qi < fileList.size(); qi++) {
             try {
                 String string01 = "";
                 int stringType = 0;
                 BufferedReader br = new BufferedReader(new FileReader(folderPath + fileList.get(qi)));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(logFileName,true));
+                BufferedWriter bw = new BufferedWriter(new FileWriter(logFileName, true));
                 currentfilename = fileList.get(qi);
                 try {
                     while ((string01 = br.readLine()) != null) {
@@ -110,8 +112,7 @@ public class LogParser {
                                 stringOutput = dateFormat.format(date) + "||" + latest + "||" + currentfilename;
                                 //System.out.println("DATA DIGITS: " + stringOutput);
                             } else //System.out.println(parsedString[0]);
-                            if (parsedString[0].equals("Mar")
-                                    || parsedString[0].equals("Jan")
+                            if (parsedString[0].equals("Jan")
                                     || parsedString[0].equals("Feb")
                                     || parsedString[0].equals("Mar")
                                     || parsedString[0].equals("Apr")
@@ -144,6 +145,11 @@ public class LogParser {
                         try {
                             bw.write(stringOutput + "||" + stringOutput.hashCode());
                             bw.write('\n');
+                            
+                            String parsedString2[] = stringOutput.split("||");
+                           System.out.println("Parsed2: "+parsedString2[1]);
+                            
+                            //ms = new Mysql(dateFormatMysql.format(date), "java.lang.NullPointerException", currentfilename, stringOutput.hashCode());
                         } catch (Exception writeToFile) {
                         }
 //                        System.out.println(stringOutput);

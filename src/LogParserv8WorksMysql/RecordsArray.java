@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package LogParserv8Works;
+package LogParserv8WorksMysql;
 
-import LogParserv8WorksMysql.*;
 import LogParserv7RecordTypes.*;
 import LogParserv6RecordTypes.*;
 import LogParserv5LogType.*;

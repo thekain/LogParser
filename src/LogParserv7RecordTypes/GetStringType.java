@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package LogParserv6RecordTypes;
+package LogParserv7RecordTypes;
 
+import LogParserv6RecordTypes.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -41,17 +42,18 @@ public class GetStringType {
                 string01 = string02.replaceAll("\\]", "");
                 string02 = string01.replaceAll("\\[", "");
                 string02 = string01.replaceAll("\\ <", "<");
-                inputString = string02;
+                string01 = string02.replaceAll(" at", "at");
+                inputString = string01;
             }
-            String parsedString[] = string02.split(" ");
+            //String parsedString[] = string02.split(" ");
 
-            for (int i = 0; i < parsedString.length; i++) {
+//            for (int i = 0; i < parsedString.length; i++) {
                 //    System.out.println(parsedString[0]);
                 //for (int j = 0; j < parsedString[i].length(); j++) {
-                System.out.print(parsedString[i]);
+                System.out.println(inputString);
                 //}
-            }
-            System.out.println("");
+  //          }
+    //        System.out.println("");
             //System.out.println(parsedString[0] + " " + parsedString[1]);
 //            regString = "";
 //

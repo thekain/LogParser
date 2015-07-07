@@ -65,11 +65,11 @@ public class LogParser {
 //                    System.out.println(string01);
                         stringType = getStringType.GetStringType(string01);
                         stringNumber += stringType;
-//                    System.out.println(stringNumber);
+                    System.out.println(stringNumber);
                     }
                 } catch (Exception stringReadAttempt) {
                     stringReadAttempt.printStackTrace();
-                    System.out.println("Can read string: " + currentfilename);
+                    System.out.println("Can not read string: " + currentfilename);
                 }
             } catch (Exception fileReadExeption) {
                 fileReadExeption.printStackTrace();

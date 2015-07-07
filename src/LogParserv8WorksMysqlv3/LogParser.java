@@ -21,6 +21,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import LogParserv4MysqlEdition.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,7 +44,14 @@ public class LogParser {
         File folder = new File(folderPath);
         File[] listOfFiles = folder.listFiles();
 
-        Mysql ms;
+        String url = "jdbc:mysql://localhost:3306/";
+        String batchStatement = "?rewriteBatchedStatements=true";
+        String driver = "com.mysql.jdbc.Driver";
+        String dbname = "cnplogs";
+        String username = "root";
+        String password = "";
+        String sqwl = null;
+        int idNum;
 
         //  GetStringType getStringType = new GetStringType();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss,SSS");
@@ -62,6 +73,26 @@ public class LogParser {
 
         int stringNumber = 0;
 
+        try {
+            Class.forName(driver).newInstance();
+            Connection conn = DriverManager.getConnection(url + dbname + batchStatement, username, password);
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT id FROM cnplogs.logs");
+
+            while (rs.next()) {
+                sqwl = rs.getString("id");
+            }
+            System.out.println(sqwl);
+            conn.close();
+        } catch (Exception readSQL) {
+        }
+
+        if (sqwl == null) {
+            idNum = 0;
+        } else {
+            idNum = Integer.parseInt(sqwl) + 1;
+        }
+
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
                 String filename = listOfFiles[i].getName();
@@ -70,102 +101,114 @@ public class LogParser {
                 }
             }
         }
-
-        for (int qi = 0; qi < fileList.size(); qi++) {
-            System.out.println(fileList.get(qi));
-        }
+        try {
+            Class.forName(driver).newInstance();
+            Connection conn = DriverManager.getConnection(url + dbname + batchStatement, username, password);
+            Statement st = conn.createStatement();
+//            for (int qi = 0; qi < fileList.size(); qi++) {
+//                System.out.println(fileList.get(qi));
+//            }
 //                    System.out.println("");
-
-        for (int qi = 0; qi < fileList.size(); qi++) {
-            try {
-                String string01 = "";
-                int stringType = 0;
-                BufferedReader br = new BufferedReader(new FileReader(folderPath + fileList.get(qi)));
-                BufferedWriter bw = new BufferedWriter(new FileWriter(logFileName, true));
-                currentfilename = fileList.get(qi);
+            for (int qi = 0; qi < fileList.size(); qi++) {
                 try {
-                    while ((string01 = br.readLine()) != null) {
-                        string11 = "";
-                        string12 = "";
-                        string11 = string01.replaceAll("      ", " ");
-                        string12 = string11.replaceAll("     ", " ");
-                        string11 = string12.replaceAll("    ", " ");
-                        string12 = string11.replaceAll("   ", " ");
-                        string11 = string12.replaceAll("  ", " ");
-                        string12 = string11.replaceAll("\t", " ");
-                        string11 = string12.replaceAll("\\]", "");
-                        string12 = string11.replaceAll("\\ <", "<");
-                        string11 = string12.replaceAll(" at", "at");
-                        string12 = string11.replaceAll("\\ <", "<");
-                        string11 = string12.replaceAll(" \\[", "");
-                        string12 = string11.replaceAll("\\[", "");
-                        String latest = string12;
-                        String parsedString[] = latest.split(" ");
-                        //  System.out.println(latest);
+                    String string01 = "";
+                    int stringType = 0;
+                    BufferedReader br = new BufferedReader(new FileReader(folderPath + fileList.get(qi)));
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(logFileName, true));
+                    currentfilename = fileList.get(qi);
+                    try {
+                        while ((string01 = br.readLine()) != null) {
+                            string11 = "";
+                            string12 = "";
+                            string11 = string01.replaceAll("      ", " ");
+                            string12 = string11.replaceAll("     ", " ");
+                            string11 = string12.replaceAll("    ", " ");
+                            string12 = string11.replaceAll("   ", " ");
+                            string11 = string12.replaceAll("  ", " ");
+                            string12 = string11.replaceAll("\t", " ");
+                            string11 = string12.replaceAll("\\]", "");
+                            string12 = string11.replaceAll("\\ <", "<");
+                            string11 = string12.replaceAll(" at", "at");
+                            string12 = string11.replaceAll("\\ <", "<");
+                            string11 = string12.replaceAll(" \\[", "");
+                            string12 = string11.replaceAll("\\[", "");
+                            String latest = string12;
+                            String parsedString[] = latest.split(" ");
+                            //  System.out.println(latest);
 //                        System.out.println(parsedString[0]);
-                        String somestring = "";
-                        try {
-                            somestring = somestring + parsedString[0].charAt(0) + parsedString[0].charAt(1);
-                            // System.out.println(somestring);
-                            if (somestring.matches("\\d+")) {
-                                dateString = (parsedString[0] + " " + parsedString[1]);
-                                //System.out.println(latest);
-                                date = dateFormat.parse(parsedString[0] + " " + parsedString[1]);
-                                stringOutput = dateFormat.format(date) + "╚" + latest + "╚" + currentfilename;
-                                //System.out.println("DATA DIGITS: " + stringOutput);
-                            } else //System.out.println(parsedString[0]);
-                            if (parsedString[0].equals("Jan")
-                                    || parsedString[0].equals("Feb")
-                                    || parsedString[0].equals("Mar")
-                                    || parsedString[0].equals("Apr")
-                                    || parsedString[0].equals("May")
-                                    || parsedString[0].equals("Jun")
-                                    || parsedString[0].equals("Jul")
-                                    || parsedString[0].equals("Aug")
-                                    || parsedString[0].equals("Sep")
-                                    || parsedString[0].equals("Oct")
-                                    || parsedString[0].equals("Nov")
-                                    || parsedString[0].equals("Dec")) {
-                                dateString = (parsedString[0] + " " + parsedString[1] + " " + parsedString[2] + " " + parsedString[3] + " " + parsedString[4]);
-                                //System.out.println(latest);
-                                //System.out.println(parsedString[0] + " " + parsedString[1] + " " + parsedString[2]);
-                                date = dateFormatwithName.parse(parsedString[0] + " " + parsedString[1] + " " + parsedString[2] + " " + parsedString[3] + " " + parsedString[4]);
-                                stringOutput = dateFormat.format(date) + "╚" + latest + "╚" + currentfilename;
-                                //System.out.println("DATA WORD: " + stringOutput);
-                            } else {
-                                stringWithDate = dateFormat.format(date) + "╚" + latest + "╚" + currentfilename;
-                                stringOutput = stringWithDate;
-                                //System.out.println("NO DATA: " + stringOutput);
-                                //System.out.println(stringWithDate);
+                            String somestring = "";
+                            try {
+                                somestring = somestring + parsedString[0].charAt(0) + parsedString[0].charAt(1);
+                                // System.out.println(somestring);
+                                if (somestring.matches("\\d+")) {
+                                    dateString = (parsedString[0] + " " + parsedString[1]);
+                                    //System.out.println(latest);
+                                    date = dateFormat.parse(parsedString[0] + " " + parsedString[1]);
+                                    stringOutput = dateFormat.format(date) + "╚" + latest + "╚" + currentfilename;
+                                    //System.out.println("DATA DIGITS: " + stringOutput);
+                                } else //System.out.println(parsedString[0]);
+                                if (parsedString[0].equals("Jan")
+                                        || parsedString[0].equals("Feb")
+                                        || parsedString[0].equals("Mar")
+                                        || parsedString[0].equals("Apr")
+                                        || parsedString[0].equals("May")
+                                        || parsedString[0].equals("Jun")
+                                        || parsedString[0].equals("Jul")
+                                        || parsedString[0].equals("Aug")
+                                        || parsedString[0].equals("Sep")
+                                        || parsedString[0].equals("Oct")
+                                        || parsedString[0].equals("Nov")
+                                        || parsedString[0].equals("Dec")) {
+                                    dateString = (parsedString[0] + " " + parsedString[1] + " " + parsedString[2] + " " + parsedString[3] + " " + parsedString[4]);
+                                    //System.out.println(latest);
+                                    //System.out.println(parsedString[0] + " " + parsedString[1] + " " + parsedString[2]);
+                                    date = dateFormatwithName.parse(parsedString[0] + " " + parsedString[1] + " " + parsedString[2] + " " + parsedString[3] + " " + parsedString[4]);
+                                    stringOutput = dateFormat.format(date) + "╚" + latest + "╚" + currentfilename;
+                                    //System.out.println("DATA WORD: " + stringOutput);
+                                } else {
+                                    stringWithDate = dateFormat.format(date) + "╚" + latest + "╚" + currentfilename;
+                                    stringOutput = stringWithDate;
+                                    //System.out.println("NO DATA: " + stringOutput);
+                                    //System.out.println(stringWithDate);
+                                }
+                            } catch (Exception empty) {
+                                //   empty.printStackTrace();
                             }
-                        } catch (Exception empty) {
-                            //   empty.printStackTrace();
-                        }
 
-                        //System.out.println(stringOutput + " " + stringOutput.hashCode());
-                        //System.out.println(dateFormat.format(date));
-                        try {
-                            bw.write(stringOutput + "||" + stringOutput.hashCode());
-                            bw.write('\n');
+                            //System.out.println(stringOutput + " " + stringOutput.hashCode());
+                            //System.out.println(dateFormat.format(date));
+                            try {
+                                bw.write(stringOutput + "||" + stringOutput.hashCode());
+                                bw.write('\n');
 
-                            String parsedString2[] = stringOutput.split("╚");
-                        //    System.out.println("Parsed2: " + parsedString2[1]);
+                                String parsedString2[] = stringOutput.split("╚");
+                                //    System.out.println("Parsed2: " + parsedString2[1]);
 
-                            ms = new Mysql(dateFormatMysql.format(date), parsedString2[1], currentfilename, stringOutput.hashCode());
-                        } catch (Exception writeToFile) {
-                        }
+                                //ms = new Mysql(dateFormatMysql.format(date), parsedString2[1], currentfilename, stringOutput.hashCode());
+                                int val = st.executeUpdate("INSERT into cnplogs.logs VALUES('" + idNum + "','" + dateFormatMysql.format(date) + "','" + parsedString2[1] + "','" + currentfilename + "','" + stringOutput.hashCode() + "')");
+                                if (val == 1) {
+                                    //System.out.print("Successfully inserted value");
+                                    idNum++;
+                                }
+                            } catch (Exception writeToFile) {
+                            }
 //                        System.out.println(stringOutput);
+                        }
+
+                    } catch (Exception stringReadAttempt) {
+                        stringReadAttempt.printStackTrace();
+                        System.out.println("Can not read string: " + currentfilename);
                     }
 
-                } catch (Exception stringReadAttempt) {
-                    stringReadAttempt.printStackTrace();
-                    System.out.println("Can not read string: " + currentfilename);
-                }
+                } catch (Exception fileReadExeption) {
+                    fileReadExeption.printStackTrace();
+                    System.out.println("Can not read file: " + currentfilename);
+                } //TRY for every file end
+            } //IF for every file end
 
-            } catch (Exception fileReadExeption) {
-                fileReadExeption.printStackTrace();
-                System.out.println("Can not read file: " + currentfilename);
-            } //TRY for every file end
-        } //IF for every file end
+            conn.close();
+        } catch (Exception mysqlException) {
+            mysqlException.printStackTrace();
+        }
     } //Main end
 } //package end
